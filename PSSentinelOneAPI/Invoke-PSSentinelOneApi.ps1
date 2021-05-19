@@ -4,7 +4,9 @@ Function Invoke-PSSentinelOneApi
 	param 
 	(
 		[Parameter(Mandatory = $true)]
-		[Hashtable]$Request
+		[Hashtable]$Request,
+		[Parameter()]
+        	[Switch]$Silent
 	)
 
     $Response = Invoke-RestMethod @Request
@@ -17,8 +19,11 @@ Function Invoke-PSSentinelOneApi
 	#Paginacja
     While($Data.Count -lt $Total)
     {
-		Write-Progress -Activity "Przetwarzanie danych" -status "$Counter / $Total" -percentcomplete $([Int](($Counter/$Total)*100))
-	
+        if($null -eq $Silent)
+        {
+            Write-Progress -Activity "Przetwarzanie danych" -status "$Counter / $Total" -percentcomplete $([Int](($Counter/$Total)*100))
+        }
+        
         $Request = New-PSSentinelOneApiRequest -Uri $Request.Uri -Method GET -Headers $Request.Headers -Filter @{"cursor"=$Response.pagination.nextCursor}
 		
         $Response = Invoke-RestMethod @Request
