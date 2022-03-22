@@ -1,6 +1,47 @@
 Function New-PSSentinelOneApiRequest
 {
-    [CmdletBinding()]
+    <#
+	.SYNOPSIS
+	    Create SentineOne API request.
+
+    .PARAMETER ApiToken
+	    Authorization token.
+
+	.PARAMETER Method
+	    Rest API method.
+
+	.PARAMETER Uri
+	    API uri.
+
+	.PARAMETER Headers
+	    Use onw headers.
+
+	.PARAMETER Body
+	    JSON body.
+
+	.PARAMETER Filter
+	    Filters.
+
+	.EXAMPLE
+		$Body = @{
+			filter = @{
+				computerName = $ComputerName
+				ids = @($ComputerId)
+			}
+		}
+
+		$Params = @{
+			Uri = "https://euce1-103.sentinelone.net/web/api/v2.1/agents/actions/decommission"
+			Method = "POST"
+			Body = ($Body | ConvertTo-Json)
+			ApiToken = $ApiToken
+		}
+		$Request = New-PSSentinelOneApiRequest @Params
+
+	.NOTES
+		Author: Michal Gajda
+	#>
+	[CmdletBinding()]
 	param
 	(
 		[Parameter(Mandatory = $true,ParameterSetName="ApiToken")]
