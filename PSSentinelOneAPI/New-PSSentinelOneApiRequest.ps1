@@ -1,7 +1,7 @@
 Function New-PSSentinelOneApiRequest
 {
     [CmdletBinding()]
-	param 
+	param
 	(
 		[Parameter(Mandatory = $true,ParameterSetName="ApiToken")]
 		[String]$ApiToken,
@@ -21,15 +21,15 @@ Function New-PSSentinelOneApiRequest
     #Buduj parametryzacje dla GET'a
 	Add-Type -AssemblyName System.Web
 	$QueryString = [System.Web.HttpUtility]::ParseQueryString([String]::Empty)
-	
+
 	if($null -ne $Filter)
 	{
 		ForEach($Item in $Filter.GetEnumerator())
-		{ 
-			$QueryString.Add($Item.Name, $Item.Value) 
-		}		
+		{
+			$QueryString.Add($Item.Name, $Item.Value)
+		}
 	}
-	
+
 	$UriRequest = [System.UriBuilder]$Uri
 	$UriRequest.Query = $QueryString.ToString()
 
@@ -47,9 +47,9 @@ Function New-PSSentinelOneApiRequest
     $Request.Add("Uri",$UriRequest.Uri.OriginalString)
     Write-Verbose $UriRequest.Uri.OriginalString
 
-    if($Body) 
-    { 
-        $Request.Add("Body",$Body) 
+    if($Body)
+    {
+        $Request.Add("Body",$Body)
         $Request.Add("ContentType", "application/json")
     }
 
