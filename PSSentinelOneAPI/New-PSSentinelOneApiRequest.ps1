@@ -1,26 +1,26 @@
 Function New-PSSentinelOneApiRequest
 {
-    <#
+	<#
 	.SYNOPSIS
-	    Create SentineOne API request.
+		Create SentineOne API request.
 
-    .PARAMETER ApiToken
-	    Authorization token.
+	.PARAMETER ApiToken
+		Authorization token.
 
 	.PARAMETER Method
-	    Rest API method.
+		Rest API method.
 
 	.PARAMETER Uri
-	    API uri.
+		API uri.
 
 	.PARAMETER Headers
-	    Use onw headers.
+		Use onw headers.
 
 	.PARAMETER Body
-	    JSON body.
+		JSON body.
 
 	.PARAMETER Filter
-	    Filters.
+		Filters.
 
 	.EXAMPLE
 		$Body = @{
@@ -51,15 +51,15 @@ Function New-PSSentinelOneApiRequest
 		[String]$Method,
 		[Parameter(Mandatory = $true)]
 		[String]$Uri,
-        [Parameter(Mandatory = $true,ParameterSetName="Headers")]
-        [Hashtable]$Headers,
+		[Parameter(Mandatory = $true,ParameterSetName="Headers")]
+		[Hashtable]$Headers,
 		[Parameter()]
 		[String]$Body,
 		[Parameter()]
 		[Hashtable]$Filter
 	)
 
-    #Buduj parametryzacje dla GET'a
+	#Buduj parametryzacje dla GET'a
 	Add-Type -AssemblyName System.Web
 	$QueryString = [System.Web.HttpUtility]::ParseQueryString([String]::Empty)
 
@@ -75,24 +75,24 @@ Function New-PSSentinelOneApiRequest
 	$UriRequest.Query = $QueryString.ToString()
 
   	#Buduj naglowki
-    if(!$Headers)
-    {
-        $Headers = @{}
-        $Headers.Add("Authorization","ApiToken $ApiToken")
-    }
+	if(!$Headers)
+	{
+		$Headers = @{}
+		$Headers.Add("Authorization","ApiToken $ApiToken")
+	}
 
 	#Buduj request
 	$Request = @{}
-    $Request.Add("Method",$Method)
-    $Request.Add("Headers",$Headers)
-    $Request.Add("Uri",$UriRequest.Uri.OriginalString)
-    Write-Verbose $UriRequest.Uri.OriginalString
+	$Request.Add("Method",$Method)
+	$Request.Add("Headers",$Headers)
+	$Request.Add("Uri",$UriRequest.Uri.OriginalString)
+	Write-Verbose $UriRequest.Uri.OriginalString
 
-    if($Body)
-    {
-        $Request.Add("Body",$Body)
-        $Request.Add("ContentType", "application/json")
-    }
+	if($Body)
+	{
+		$Request.Add("Body",$Body)
+		$Request.Add("ContentType", "application/json")
+	}
 
-    return $Request
+	return $Request
 }
