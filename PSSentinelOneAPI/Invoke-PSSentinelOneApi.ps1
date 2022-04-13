@@ -8,7 +8,7 @@ Function Invoke-PSSentinelOneApi
 		Request object.
 
 	.PARAMETER Silent
-		witout Write-Progress
+		Witout Write-Progress
 
 	.EXAMPLE
 		$Request = New-PSSentinelOneApiRequest -Uri "https://euce1-103.sentinelone.net/web/api/v2.1/agents" -Method GET -ApiToken $ApiToken
@@ -26,6 +26,7 @@ Function Invoke-PSSentinelOneApi
 		[Switch]$Silent
 	)
 
+	Write-Verbose $Request.Uri
 	$Response = Invoke-RestMethod @Request
 
 	$Data = @()
@@ -33,19 +34,22 @@ Function Invoke-PSSentinelOneApi
 	$Counter = $Data.Count
 	$Total = $Response.pagination.totalItems
 
-	#Paginacja
-	While($Data.Count -lt $Total)
+	#Pagination
+	While($Response.pagination.nextCursor)
 	{
-		if($null -eq $Silent)
+		if(!$Silent.IsPresent)
 		{
 			Write-Progress -Activity "Przetwarzanie danych" -status "$Counter / $Total" -percentcomplete $([Int](($Counter/$Total)*100))
 		}
 
-		$Request = New-PSSentinelOneApiRequest -Uri $Request.Uri -Method GET -Headers $Request.Headers -Filter @{"cursor"=$Response.pagination.nextCursor}
+		$Request = New-PSSentinelOneApiRequest -Uri $Request.Uri -Method $Request.Method -Headers $Request.Headers -Body @{"cursor"=$Response.pagination.nextCursor}
 
+		Write-Verbose $Request.Uri
 		$Response = Invoke-RestMethod @Request
 		$Data += $Response.data
 		$Counter = $Data.Count
+
+		write-host $Response.pagination.nextCursor
 	}
 
 	return $Data
