@@ -48,8 +48,6 @@ Function Invoke-PSSentinelOneApi
 		$Response = Invoke-RestMethod @Request
 		$Data += $Response.data
 		$Counter = $Data.Count
-
-		write-host $Response.pagination.nextCursor
 	}
 
 	return $Data
