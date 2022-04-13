@@ -52,6 +52,7 @@ Function New-PSSentinelOneApiRequest
 		Author: Michal Gajda
 	#>
 	[CmdletBinding()]
+	[OutputType([System.Collections.Hashtable])]
 	param
 	(
 		[Parameter(Mandatory = $true,ParameterSetName="ApiToken")]
