@@ -120,7 +120,7 @@ Function New-PSSentinelOneApiRequest
 			Write-Debug "Params: $Body"
 		}
 	}
-	
+
 	#Build Uri
 	$Request.Add("Uri",$UriRequest.Uri.OriginalString)
 	Write-Verbose $UriRequest.Uri.OriginalString
