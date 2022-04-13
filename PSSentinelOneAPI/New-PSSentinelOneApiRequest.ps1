@@ -14,13 +14,10 @@ Function New-PSSentinelOneApiRequest
 		API uri.
 
 	.PARAMETER Headers
-		Use onw headers.
+		Use own headers.
 
 	.PARAMETER Body
-		JSON body.
-
-	.PARAMETER Filter
-		Filters.
+		Hashtable or JSON body.
 
 	.EXAMPLE
 		$Body = @{
@@ -34,6 +31,19 @@ Function New-PSSentinelOneApiRequest
 			Uri = "https://euce1-103.sentinelone.net/web/api/v2.1/agents/actions/decommission"
 			Method = "POST"
 			Body = ($Body | ConvertTo-Json)
+			ApiToken = $ApiToken
+		}
+		$Request = New-PSSentinelOneApiRequest @Params
+
+	.EXAMPLE
+		$Body = @{
+			tenant = $true
+		}
+
+		$Params = @{
+			Uri = "https://euce1-103.sentinelone.net/web/api/v2.1/restrictions"
+			Method = "GET"
+			Body = $Body
 			ApiToken = $ApiToken
 		}
 		$Request = New-PSSentinelOneApiRequest @Params
@@ -54,45 +64,65 @@ Function New-PSSentinelOneApiRequest
 		[Parameter(Mandatory = $true,ParameterSetName="Headers")]
 		[Hashtable]$Headers,
 		[Parameter()]
-		[String]$Body,
-		[Parameter()]
-		[Hashtable]$Filter
+		$Body
 	)
 
-	#Buduj parametryzacje dla GET'a
+	#Load assembly System.Web
 	Add-Type -AssemblyName System.Web
-	$QueryString = [System.Web.HttpUtility]::ParseQueryString([String]::Empty)
-
-	if($null -ne $Filter)
-	{
-		ForEach($Item in $Filter.GetEnumerator())
-		{
-			$QueryString.Add($Item.Name, $Item.Value)
-		}
-	}
 
 	$UriRequest = [System.UriBuilder]$Uri
-	$UriRequest.Query = $QueryString.ToString()
 
-  	#Buduj naglowki
+  	#Build request headers
 	if(!$Headers)
 	{
 		$Headers = @{}
 		$Headers.Add("Authorization","ApiToken $ApiToken")
 	}
 
-	#Buduj request
+	#Build core request
 	$Request = @{}
 	$Request.Add("Method",$Method)
 	$Request.Add("Headers",$Headers)
-	$Request.Add("Uri",$UriRequest.Uri.OriginalString)
-	Write-Verbose $UriRequest.Uri.OriginalString
+	Write-Debug "Method: $Method"
 
+	#Build request params
 	if($Body)
 	{
-		$Request.Add("Body",$Body)
-		$Request.Add("ContentType", "application/json")
+		if($Method -eq "GET")
+		{
+			#For GET method
+			$QueryString = [System.Web.HttpUtility]::ParseQueryString($UriRequest.Query)
+
+			ForEach($Item in $Body.GetEnumerator())
+			{
+				if($null -eq $QueryString[$Item.Name])
+				{
+					#Add new param
+					$QueryString.Add($Item.Name, $Item.Value)
+				} else {
+					#Set overwrite exist param
+					$QueryString.Set($Item.Name, $Item.Value)
+				}
+			}
+
+			$UriRequest.Query = $QueryString.ToString()
+			Write-Debug "Params: $($QueryString.ToString())"
+		} else {
+			#For non GET methods
+			if($Body -is "Hashtable")
+			{
+				$Body = $Body | ConvertTo-Json
+			}
+
+			$Request.Add("Body",$Body)
+			$Request.Add("ContentType", "application/json")
+			Write-Debug "Params: $Body"
+		}
 	}
+	
+	#Build Uri
+	$Request.Add("Uri",$UriRequest.Uri.OriginalString)
+	Write-Verbose $UriRequest.Uri.OriginalString
 
 	return $Request
 }
