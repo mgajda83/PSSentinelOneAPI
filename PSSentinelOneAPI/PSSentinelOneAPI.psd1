@@ -18,7 +18,7 @@ ModuleVersion = '1.0.0.3'
 # CompatiblePSEditions = @()
 
 # ID used to uniquely identify this module
-GUID = 'd52cc229-eef8-4bad-bb8a-e0fe777168a8'
+GUID = '022c6b25-b402-47ca-9447-9dfbd41ce37a'
 
 # Author of this module
 Author = 'Michal Gajda'
@@ -30,7 +30,7 @@ CompanyName = 'Michal Gajda'
 Copyright = '(c) 2021 Michal Gajda. All rights reserved.'
 
 # Description of the functionality provided by this module
-# Description = ''
+Description = 'Module to handle the SentinelOne API'
 
 # Minimum version of the Windows PowerShell engine required by this module
 # PowerShellVersion = ''
@@ -69,7 +69,7 @@ Copyright = '(c) 2021 Michal Gajda. All rights reserved.'
 # NestedModules = @()
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = '*'
+FunctionsToExport = @('New-PSSentinelOneApiRequest', 'Invoke-PSSentinelOneApi')
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = '*'
@@ -87,7 +87,7 @@ AliasesToExport = '*'
 # ModuleList = @()
 
 # List of all files packaged with this module
-# FileList = @()
+FileList = @('PSSentinelOneAPI.psd1', 'PSSentinelOneAPI.psm1', 'New-PSSentinelOneApiRequest.ps1', 'Invoke-PSSentinelOneApi.ps1')
 
 # Private data to pass to the module specified in RootModule/ModuleToProcess. This may also contain a PSData hashtable with additional module metadata used by PowerShell.
 PrivateData = @{
@@ -120,4 +120,3 @@ PrivateData = @{
 # DefaultCommandPrefix = ''
 
 }
-
